@@ -107,7 +107,7 @@
 
 (defn make-api
   "Creates an API based on a collection of Girouette components."
-  [components {:keys [color-map font-family-map]}]
+  [components {:keys [color-map font-family-map extra-pipeline-map]}]
   (let [components (util/into-one-vector components) ;; flatten the structure
         flattened-color-map (color/flatten-color-map color-map)
         grammar (assemble-grammar components {:color-map flattened-color-map
@@ -126,7 +126,8 @@
                                  (let [props (parsed-data->props class-name parsed-data predef-props)
                                        component (component-by-id (:component-id props))
                                        garden-fn (:garden component)
-                                       pipeline (:pipeline component common/default-pipeline)
+                                       pipeline (:pipeline component (merge common/default-pipeline
+                                                                            extra-pipeline-map))
                                        transform (pipeline->transform pipeline)]
                                    (-> (garden-fn props)
                                        (transform props)
